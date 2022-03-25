@@ -11,7 +11,7 @@
             <hr>
             <a class="btn btn-outline-info btn-sm btn-block" href="">Update Customer</a>
             <br>
-            <a class="btn btn-outline-danger btn-sm btn-block" href="">Delete Customer</a>
+            <a class="btn btn-outline-info btn-sm btn-block" href="{% url 'createOrder' customer.id %}">Place Order</a>
         </div>
     </div>
 
@@ -66,8 +66,8 @@
                     <td>{{order.product.category}}</td>
                     <td>{{order.date_created}}</td>
                     <td>{{order.status}}</td>
-                    <td><a class="btn btn-info btn-sm" href="">Update</a></td>
-                    <td><a class="btn btn-danger btn-sm" href="">Remove</a></td>
+                    <td><a class="btn btn-info btn-sm btn-block" href="{% url 'updateOrder' order.id %}">Update</a></td>
+                    <td><a class="btn btn-danger btn-sm btn-block" href="{%url 'deleteOrder' order.id %}">Delete</a></td>
                 </tr>
                 {% endfor %}
             </table>
