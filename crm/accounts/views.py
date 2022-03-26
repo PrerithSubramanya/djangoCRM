@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
+from django.core.paginator import Paginator
 from .models import *
 from .forms import OrderForm
 from .filters import *
@@ -13,11 +14,15 @@ def home(request):
     ordersCount = orders.count()
     delivered = orders.filter(status='Delivered').count()
     pending = orders.filter(status='Pending').count()
-
+    customerPaginator = Paginator(customers,5)
+    customerPageNum = request.GET.get('page')
+    customerPage = customerPaginator.get_page(customerPageNum)
     myFilter = OrderFilter(request.GET, queryset=orders) # filterforms
     orders = myFilter.qs
-
-    context = {'orders': orders, 'customers':customers, 'ordersCount':ordersCount, 'delivered':delivered,
+    orderPaginator = Paginator(orders,5)
+    orderPageNum = request.GET.get('page')
+    orderPage = orderPaginator.get_page(orderPageNum)
+    context = {'orderPage': orderPage, 'customerPage':customerPage, 'ordersCount':ordersCount, 'delivered':delivered,
                'pending':pending, 'myFilter':myFilter}
     return render(request, 'accounts/dashboard.html', context)
 
