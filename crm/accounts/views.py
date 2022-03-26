@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.forms import inlineformset_factory
 from .models import *
 from .forms import OrderForm
+from .filters import *
 # Create your views here.
 
 
@@ -12,8 +14,11 @@ def home(request):
     delivered = orders.filter(status='Delivered').count()
     pending = orders.filter(status='Pending').count()
 
+    myFilter = OrderFilter(request.GET, queryset=orders) # filterforms
+    orders = myFilter.qs
+
     context = {'orders': orders, 'customers':customers, 'ordersCount':ordersCount, 'delivered':delivered,
-               'pending':pending}
+               'pending':pending, 'myFilter':myFilter}
     return render(request, 'accounts/dashboard.html', context)
 
 
@@ -25,24 +30,32 @@ def customer(request, id):
     customer = Customer.objects.get(id=id)
     orders = customer.order_set.all()
     orderCount = orders.count()
+
+    myCustomerFilter = CustomerOrderFilter(request.GET, queryset=orders)
+    orders = myCustomerFilter.qs
+
     context = {
         'customer':customer,
         'orders':orders,
-        'orderCount':orderCount
+        'orderCount':orderCount,
+        'myCustomerFilter':myCustomerFilter
     }
     return render(request, 'accounts/customer.html', context)
 
 
 def createOrder(request, id):
+    OrderFormSet = inlineformset_factory(Customer, Order, fields=('product', 'status'), extra=5)
     customer = Customer.objects.get(id=id)
-    form = OrderForm(initial={'customer':customer})
+    formset = OrderFormSet(queryset =Order.objects.none(), instance=customer) # queryset to display black on online forms
+    # form = OrderForm(initial={'customer':customer})
     if request.method == 'POST':
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            form.save()
+        # form = OrderForm(request.POST)
+        formset = OrderFormSet(request.Post, instance=customer)
+        if formset.is_valid():
+            formset.save()
             return redirect('/')
 
-    context = {'form': form}
+    context = {'formset': formset}
     return render(request, 'accounts/createOrder.html', context)
 
 def updateOrder(request, id):
