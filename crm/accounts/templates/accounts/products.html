@@ -22,7 +22,7 @@
                         <td>{{product.name}}</td>
                         <td>{{product.category}}</td>
                         <td>{{product.price}}</td>
-                        <td><a class="btn btn-sm btn-warning" href="">Update Price</a></td>
+                        <td><a class="btn btn-sm btn-warning" href="{% url 'updateProduct' product.id %}">Update Price</a></td>
                     </tr>
                 {% endfor %}
                 <div class="page-links"> <!-- to create pagination -->
@@ -34,7 +34,7 @@
                     {% endif %}
                 </div>
             </table>
-            <a class="btn btn-primary btn-sm btn-block" href="#">Create product</a>
+            <a class="btn btn-primary btn-sm btn-block" href="{% url 'createProduct' %}">Create product</a>
         </div>
     </div>
 </div>

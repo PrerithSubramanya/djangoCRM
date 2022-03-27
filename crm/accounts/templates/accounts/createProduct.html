@@ -7,18 +7,19 @@
     <div class="col-md-6">
         <div class="card card-body">
             {% if flag == 1 %}
-            <h5>Enter Customer Details</h5>
+            <h5>Enter Product Details</h5>
             {%elif flag == 2 %}
-            <h5>Update Customer Details</h5>
+            <h5>Update Product Details</h5>
             {% endif %}
             <form action="" method="POST">
                 {% csrf_token %}
-                {{ form }}
+                {{form}}
                 <br>
-                <input class ="btn btn-success" type="submit" name="Submit">
+                <input type="submit" name="Submit">
             </form>
         </div>
     </div>
 </div>
+
 
 {% endblock %}

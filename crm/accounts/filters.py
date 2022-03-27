@@ -3,6 +3,7 @@ from .models import *
 from django_filters import CharFilter, DateFilter
 
 
+
 class OrderFilter(django_filters.FilterSet):
     customer = CharFilter(field_name='customer__name', lookup_expr='icontains', label='Customer')
     product = CharFilter(field_name='product__name', lookup_expr='icontains', label='Product')

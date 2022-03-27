@@ -8,12 +8,23 @@ from .filters import *
 # Create your views here.
 
 
+def register(request):
+    context={}
+    return render(request, 'accounts/register.html',context)
+
+
+def login(request):
+    context = {}
+    return render(request, 'accounts/login.html',context)
+
+
 def home(request):
     orders = Order.objects.all()
     customers = Customer.objects.all()
     ordersCount = orders.count()
     delivered = orders.filter(status='Delivered').count()
     pending = orders.filter(status='Pending').count()
+    delivery = orders.filter(status='Out for delivery').count()
     customerPaginator = Paginator(customers,5)
     customerPageNum = request.GET.get('page')
     customerPage = customerPaginator.get_page(customerPageNum)
@@ -23,7 +34,7 @@ def home(request):
     orderPageNum = request.GET.get('page')
     orderPage = orderPaginator.get_page(orderPageNum)
     context = {'orderPage': orderPage, 'customerPage':customerPage, 'ordersCount':ordersCount, 'delivered':delivered,
-               'pending':pending, 'myFilter':myFilter}
+               'pending':pending, 'delivery':delivery, 'myFilter':myFilter}
     return render(request, 'accounts/dashboard.html', context)
 
 
@@ -113,3 +124,27 @@ def updateCustomer(request,id):
 
     context = {'form':form, 'flag':2}
     return render(request, 'accounts/createCustomer.html', context)
+
+
+def createProduct(request):
+    form = ProductForm()
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'form': form, 'flag':1}
+    return render(request, 'accounts/createProduct.html', context)
+
+
+def updateProduct(request, id):
+    product = Product.objects.get(id=id)
+    form = ProductForm(instance=product)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    context = {'form':form, 'flag':2}
+    return render(request, 'accounts/createProduct.html', context)
