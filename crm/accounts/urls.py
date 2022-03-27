@@ -8,4 +8,6 @@ urlpatterns = [
     path('createOrder/<str:id>', views.createOrder, name='createOrder'),
     path('updateOrder/<str:id>', views.updateOrder, name='updateOrder'),
     path('deleteOrder/<str:id>', views.deleteOrder, name='deleteOrder'),
+    path('createCustomer/', views.createCustomer, name='createCustomer'),
+    path('updateCustomer/<str:id>', views.updateCustomer, name='updateCustomer'),
 ]

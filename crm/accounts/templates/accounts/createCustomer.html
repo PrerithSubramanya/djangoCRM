@@ -1,0 +1,24 @@
+{% extends 'accounts/main.html' %}
+{% load static %}
+
+{% block content %}
+<br>
+<div class="row">
+    <div class="col-md">
+        <div class="card card-body">
+            {% if flag == 1 %}
+            <h5>Enter Customer Details</h5>
+            {%elif flag == 2 %}
+            <h5>Update Customer Details</h5>
+            {% endif %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <input class ="btn btn-success" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -9,7 +9,7 @@
         <div class="card card-body">
             <h5>Customer:</h5>
             <hr>
-            <a class="btn btn-outline-info btn-sm btn-block" href="">Update Customer</a>
+            <a class="btn btn-outline-info btn-sm btn-block" href="{% url 'updateCustomer' customer.id %}">Update Customer Details</a>
             <br>
             <a class="btn btn-outline-success btn-sm btn-block" href="{% url 'createOrder' customer.id %}">Place New Order</a>
         </div>

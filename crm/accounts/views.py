@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,HttpResponseRedirect
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from django.core.paginator import Paginator
 from .models import *
-from .forms import OrderForm
+from .forms import *
 from .filters import *
 # Create your views here.
 
@@ -29,7 +29,11 @@ def home(request):
 
 def products(request):
     products = Product.objects.all()
-    return render(request, 'accounts/products.html', {'products': products})
+    productPaginator = Paginator(products,10)
+    productPageNum = request.GET.get('page')
+    productPage = productPaginator.get_page(productPageNum)
+    return render(request, 'accounts/products.html', {'productPage': productPage})
+
 
 def customer(request, id):
     customer = Customer.objects.get(id=id)
@@ -55,13 +59,14 @@ def createOrder(request, id):
     # form = OrderForm(initial={'customer':customer})
     if request.method == 'POST':
         # form = OrderForm(request.POST)
-        formset = OrderFormSet(request.Post, instance=customer)
+        formset = OrderFormSet(request.POST, instance=customer)
         if formset.is_valid():
             formset.save()
             return redirect('/')
 
     context = {'formset': formset}
     return render(request, 'accounts/createOrder.html', context)
+
 
 def updateOrder(request, id):
     order = Order.objects.get(id=id)
@@ -83,3 +88,28 @@ def deleteOrder(request, id):
         return redirect('/')
     context = {'order': order}
     return render(request, 'accounts/deleteOrder.html', context)
+
+
+def createCustomer(request):
+    form = CustomerForm()
+    if request.method == 'POST':
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'form':form, 'flag':1}
+    return render(request, 'accounts/createCustomer.html', context)
+
+
+def updateCustomer(request,id):
+    customer = Customer.objects.get(id=id)
+    form = CustomerForm(instance=customer)
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'form':form, 'flag':2}
+    return render(request, 'accounts/createCustomer.html', context)

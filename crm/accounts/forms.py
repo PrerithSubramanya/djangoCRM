@@ -10,3 +10,5 @@ class OrderForm(ModelForm):
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
+        fields = ['name', 'phone', 'email']
+        exclude = ['dateCreated']
