@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-28gpw6m034#z1^b7-s99v4y!fazzn_k1ta6q@aed6f=5)mogo5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['prerith-crm-admin-db.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
