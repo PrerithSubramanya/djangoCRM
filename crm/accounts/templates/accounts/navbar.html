@@ -1,4 +1,16 @@
 {% load static %}
+
+<style>
+  .user-msg{
+      font-size: 15px;
+      font-style:italic;
+      color: #fff;
+      margin-right: 20px;
+</style>
+
+
+
+
 <nav class="navbar navbar-fixed-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <img src="{% static '/images/logo.png' %}">
@@ -17,4 +29,10 @@
       </ul>
     </div>
   </div>
+
+
+    <span class ="user-msg">Hello,{{request.user}}</span>
+    <span  ><a class ="user-msg" href="{%url 'logout' %}">Logout</a></span>
+
+
 </nav>
