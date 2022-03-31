@@ -1,38 +1,38 @@
-from django.shortcuts import render, redirect,HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.forms import inlineformset_factory
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
+from .decorators import unauthenticated, userPermission
 from .models import *
 from .forms import *
 from .filters import *
 # Create your views here.
 
 
+@unauthenticated # when signed in it restricts access to login page
 def register(request):
-    if request.user.is_authenticated: # when signed in it restricts access to login page
-        return redirect('home')
-    else:
-        form = CreateUserForm()
-        if request.method =='POST':
-            form = CreateUserForm(request.POST)
-            if form.is_valid():
-                form.save()
-                username = form.cleaned_data.get('username')
-                messages.success(request, 'Account was created for ' + username)
-                return redirect('login')
+    form = CreateUserForm()
+    if request.method =='POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            group = Group.objects.get(name='customer')
+            user.groups.add(group)
+            messages.success(request, 'Account was created for ' + username)
+            return redirect('login')
 
-        context={'form':form}
-        return render(request, 'accounts/register.html',context)
+    context={'form':form}
+    return render(request, 'accounts/register.html',context)
 
 
+@unauthenticated
 def loginPage(request):
-    if request.user.is_authenticated: # when signed in it restricts access to login page
-        return redirect('home')
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -55,6 +55,7 @@ def logoutUser(request):
 
 
 @login_required(login_url='login')
+@userPermission
 def home(request):
     orders = Order.objects.all()
     customers = Customer.objects.all()
@@ -74,8 +75,13 @@ def home(request):
                'pending':pending, 'delivery':delivery, 'myFilter':myFilter}
     return render(request, 'accounts/dashboard.html', context)
 
+def userPage(request):
+    context = {}
+    return render(request, 'accounts/user.html', context)
+
 
 @login_required(login_url='login')
+@userPermission
 def products(request):
     products = Product.objects.all()
     productPaginator = Paginator(products,10)
@@ -85,6 +91,7 @@ def products(request):
 
 
 @login_required(login_url='login')
+@userPermission
 def customer(request, id):
     customer = Customer.objects.get(id=id)
     orders = customer.order_set.all()
@@ -103,6 +110,7 @@ def customer(request, id):
 
 
 @login_required(login_url='login')
+@userPermission
 def createOrder(request, id):
     OrderFormSet = inlineformset_factory(Customer, Order, fields=('product', 'status'), extra=5)
     customer = Customer.objects.get(id=id)
@@ -120,6 +128,7 @@ def createOrder(request, id):
 
 
 @login_required(login_url='login')
+@userPermission
 def updateOrder(request, id):
     order = Order.objects.get(id=id)
 
@@ -134,6 +143,7 @@ def updateOrder(request, id):
 
 
 @login_required(login_url='login')
+@userPermission
 def deleteOrder(request, id):
     order = Order.objects.get(id=id)
     if request.method =='POST':
@@ -144,6 +154,7 @@ def deleteOrder(request, id):
 
 
 @login_required(login_url='login')
+@userPermission
 def createCustomer(request):
     form = CustomerForm()
     if request.method == 'POST':
@@ -157,6 +168,7 @@ def createCustomer(request):
 
 
 @login_required(login_url='login')
+@userPermission
 def updateCustomer(request,id):
     customer = Customer.objects.get(id=id)
     form = CustomerForm(instance=customer)
@@ -171,6 +183,7 @@ def updateCustomer(request,id):
 
 
 @login_required(login_url='login')
+@userPermission
 def createProduct(request):
     form = ProductForm()
     if request.method == 'POST':
@@ -184,6 +197,7 @@ def createProduct(request):
 
 
 @login_required(login_url='login')
+@userPermission
 def updateProduct(request, id):
     product = Product.objects.get(id=id)
     form = ProductForm(instance=product)
